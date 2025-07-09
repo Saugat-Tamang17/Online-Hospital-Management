@@ -184,6 +184,7 @@ vector <patient> patients_list; // vector array to store the list of patients
         // Add other cases as needed
       }
     } while (choice != 7);
+    cout << "Thank you for using the Online Hospital Management System!\n";
     
   }
 
