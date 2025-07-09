@@ -119,7 +119,7 @@ vector <patient> patients_list; // vector array to store the list of patients
     cout << " WELCOME TO ONLINE HOSPITAL MANAGEMENT SYSTEM\n";
     cout << "-----------------------------------------------------\n";
     do {
-        cout << "1. Add Patient\n2. Create Appointment\n3. Generate Bill\n4. Show Reports\n5. List Doctors\n 6. View Appointments\n   7. Exit\n";
+        cout << "1. Add Patient\n2. Create Appointment\n3. Generate Bill\n4. Show Reports\n5. List Doctors\n6.View Appointments\n   7. Exit\n";
         cout << "Enter choice: ";
         cin >> choice;
     //loops until the user decides to exit with choice 7
