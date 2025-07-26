@@ -86,8 +86,13 @@ public:
         cout << endl;
     }
 
-    int getID() const { return doctor_ID; }
-    string getSpecialization() const { return specialization; }
+    int getID() const {
+         return doctor_ID;
+         }
+    string getSpecialization() const {
+        
+        return specialization;
+     }
 };
 
 struct Appointment {
@@ -215,7 +220,6 @@ int main() {
         Doctor("Dr. Giri", 50, 1, 102, "Neurology"),
         Doctor("Dr. Tamang", 40, 0, 103, "Pediatrics"),
         Doctor("Dr. Rai", 42, 1, 104, "Orthopedics"),
-        Doctor("Dr. Lama", 38, 0, 105, "Dermatology")
     };
     vector<Appointment> appointments;
 
@@ -228,7 +232,7 @@ int main() {
         {"skin", "Dermatology"}
     };
 
-    srand(time(nullptr));  // initialize random seed for billing
+    srand(time(0));  // initialize random seed for billing
 
     cout << "Welcome to Hospital Management System\n";
     cout << "Select Role: 1. Admin 2. Doctor 3. Patient\nRole: ";
@@ -253,20 +257,38 @@ int main() {
             cin >> choice;
 
             switch (choice) {
-                case 1: {  // first case is for adding a patienta
+                case 1: {
                     string name, disease;
                     int age, gender, patient_ID, room_number;
-                    cout << "Enter patient details (Name Age Gender PatientID Room Disease): ";
-                    cin >> name >> age >> gender >> patient_ID >> room_number >> disease;
+                    cout << "Enter patient's name: ";
+                    cin >> name;
+                    cout << "Enter patient's age: ";
+                    cin >> age;
+                    cout << "Enter patient's gender (0: male/1: female/2: other ): ";
+                    cin >> gender;
+                    cout << "Enter patient's ID: ";
+                    cin >> patient_ID;
+                    cout << "Enter patient's room number: ";
+                    cin >> room_number;
+                    cout << "Enter patient's disease: ";
+                    cin >> disease;
                     patients_list.push_back(patient(name, age, gender, patient_ID, room_number, disease));
                     cout << "Patient added successfully!\n";
                     break;
                 }
-                case 2: {   //second case is for adding a doctor
+                case 2: {
                     string name, specialization;
                     int age, gender, doctor_ID;
-                    cout << "Enter doctor details (Name Age Gender DoctorID Specialization): ";
-                    cin >> name >> age >> gender >> doctor_ID >> specialization;
+                    cout << "Enter doctor's name: ";
+                    cin >> name;
+                    cout << "Enter doctor's age: ";
+                    cin >> age;
+                    cout << "Enter doctor's gender (0/1/2): ";
+                    cin >> gender;
+                    cout << "Enter doctor's ID: ";
+                    cin >> doctor_ID;
+                    cout << "Enter doctor's specialization: ";
+                    cin >> specialization;
                     doctors.push_back(Doctor(name, age, gender, doctor_ID, specialization));
                     cout << "Doctor added successfully!\n";
                     break;
@@ -274,7 +296,9 @@ int main() {
                 case 3: {  // third case is for the appointment creation
                     int patient_ID;
                     string disease;
-                    cout << "Enter Patient ID and Disease: ";
+                    cout << "Enter Patient ID: ";
+                    cin >> patient_ID;
+                    cout << "Enter Disease: ";
                     cin >> patient_ID >> disease;
                     if (diagnosis_map.find(disease) == diagnosis_map.end()) {
                         cout << "Unknown disease.\n";
