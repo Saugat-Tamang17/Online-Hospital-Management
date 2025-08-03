@@ -5,7 +5,10 @@
 #include<map>
 #include<cstdlib>
 #include<ctime>   
+
 using namespace std;
+
+
 
 class person {
 protected:
@@ -114,6 +117,17 @@ void saveAppointmentToFile(const Appointment& appt) {
     file.close();
 }
 
+void saveReportsToFile(const vector<patient>& patients_list) {
+    ofstream file("patient_reports.txt");
+    for (const auto& p : patients_list) {
+        file << "Patient ID: " << p.getID() << ", Name: " << p.getName()
+             << ", Disease: " << p.getDisease() << endl;
+    }
+    file.close();
+    cout << "Reports saved to 'patient_reports.txt'.\n";
+}
+
+
 void generateBill(const vector<patient>& patients_list) {
     int id;
     cout << "Enter patient ID for billing: ";
@@ -180,7 +194,8 @@ void updatePatient(vector<patient>& patients_list) {
             string name, disease;
             int age, gender, room;
             cout << "New Name: ";
-            cin >> name;
+            cin.ignore();
+            getline(cin, name);
             cout << "New Age: ";
             cin >> age;
             cout << "New Gender (0/1/2): ";
@@ -216,10 +231,10 @@ void deletePatient(vector<patient>& patients_list) {
 int main() {
     vector<patient> patients_list;
     vector<Doctor> doctors = {
-        Doctor("Dr. Maharjan", 45, 1, 101, "Cardiology"),
-        Doctor("Dr. Giri", 50, 1, 102, "Neurology"),
-        Doctor("Dr. Tamang", 40, 0, 103, "Pediatrics"),
-        Doctor("Dr. Rai", 42, 1, 104, "Orthopedics"),
+        Doctor("Dr. Maharjan", 45, 1, 500, "Cardiology"),
+        Doctor("Dr. Giri", 50, 1, 501, "Neurology"),
+        Doctor("Dr. Tamang", 40, 0, 502, "Pediatrics"),
+        Doctor("Dr. Rai", 42, 1, 503, "Orthopedics"),
     };
     vector<Appointment> appointments;
 
@@ -234,8 +249,10 @@ int main() {
 
     srand(time(0));  // initialize random seed for billing
 
+    
+
     cout << "Welcome to Hospital Management System\n";
-    cout << "Select Role: 1. Admin 2. Doctor 3. Patient\nRole: ";
+    cout << "Select Role:\n 1. Admin\n 2. Doctor\n 3. Patient\nRole: ";
     int role;
     cin >> role;
 
@@ -252,6 +269,7 @@ int main() {
                  << "7. Search Patient\n"
                  << "8. Update Patient\n"
                  << "9. Delete Patient\n"
+                 << "10. Save Data to File\n"
                  << "0. Exit\n"
                  << "Choice: ";
             cin >> choice;
@@ -261,7 +279,8 @@ int main() {
                     string name, disease;
                     int age, gender, patient_ID, room_number;
                     cout << "Enter patient's name: ";
-                    cin >> name;
+                    cin.ignore(); 
+                    getline(cin, name);
                     cout << "Enter patient's age: ";
                     cin >> age;
                     cout << "Enter patient's gender (0: male/1: female/2: other ): ";
@@ -280,7 +299,8 @@ int main() {
                     string name, specialization;
                     int age, gender, doctor_ID;
                     cout << "Enter doctor's name: ";
-                    cin >> name;
+                    cin.ignore();
+                    getline(cin, name);
                     cout << "Enter doctor's age: ";
                     cin >> age;
                     cout << "Enter doctor's gender (0/1/2): ";
@@ -293,13 +313,13 @@ int main() {
                     cout << "Doctor added successfully!\n";
                     break;
                 }
-                case 3: {  // third case is for the appointment creation
+                case 3: {
                     int patient_ID;
                     string disease;
                     cout << "Enter Patient ID: ";
                     cin >> patient_ID;
                     cout << "Enter Disease: ";
-                    cin >> patient_ID >> disease;
+                    cin >> disease;
                     if (diagnosis_map.find(disease) == diagnosis_map.end()) {
                         cout << "Unknown disease.\n";
                         break;
@@ -322,15 +342,22 @@ int main() {
                     appointments.push_back({patient_ID, doc_id, time});
                     cout << "Appointment booked!\n";
                     break;
-
-                } 
-                //remaining cases are helper functions ( above main class ) //
+                }
                 case 4: generateBill(patients_list); break;
                 case 5: showReports(patients_list); break;
                 case 6: showAppointments(appointments); break;
                 case 7: searchPatient(patients_list); break;
                 case 8: updatePatient(patients_list); break;
                 case 9: deletePatient(patients_list); break;
+                case 10: {
+                    for (const auto& p : patients_list)
+                        savePatientToFile(p);
+                    for (const auto& a : appointments)
+                        saveAppointmentToFile(a);
+                    saveReportsToFile(patients_list);
+                    cout << "All patient, appointment, and report data saved to file.\n";
+                    break;
+                }
             }
         } while (choice != 0);
     } else if (role == 2) { // Doctor menu
