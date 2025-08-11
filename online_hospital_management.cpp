@@ -216,11 +216,13 @@ void deletePatient(vector<patient>& patients_list) {
     int id;
     cout << "Enter Patient ID to delete: ";
     cin >> id;
-    for (auto it = patients_list.begin(); it != patients_list.end(); ++it) {
+    for (auto it = patients_list.begin(); it != patients_list.end(); ) {
         if (it->getID() == id) {
-            patients_list.erase(it);
+            it = patients_list.erase(it);
             cout << "Patient deleted.\n";
             return;
+        } else {
+            ++it;
         }
     }
     cout << "Patient not found.\n";
@@ -238,7 +240,6 @@ int main() {
     };
     vector<Appointment> appointments;
 
-    // Map diseases to doctor specializations
     map<string, string> diagnosis_map = {
         {"heart", "Cardiology"},
         {"brain", "Neurology"},
@@ -247,36 +248,35 @@ int main() {
         {"skin", "Dermatology"}
     };
 
-    srand(time(0));  // initialize random seed for billing
+    srand(time(0));
 
-    
-
-    cout << "Welcome to Hospital Management System\n";
-    cout << "Select Role:\n 1. Admin\n 2. Doctor\n 3. Patient\nRole: ";
     int role;
-    cin >> role;
+    do {
+        cout << "\n=== Hospital Management System ===\n";
+        cout << "Select Role:\n 1. Admin\n 2. Doctor\n 3. Patient\n 0. Exit\nRole: ";
+        cin >> role;
 
-    if (role == 1) { // Admin menu
-        int choice;
-        do {
-            cout << "\n[ADMIN MENU]\n"
-                 << "1. Add Patient\n"
-                 << "2. Add Doctor\n"
-                 << "3. Create Appointment\n"
-                 << "4. Generate Bill\n"
-                 << "5. Show Reports\n"
-                 << "6. View Appointments\n"
-                 << "7. Search Patient\n"
-                 << "8. Update Patient\n"
-                 << "9. Delete Patient\n"
-                 << "10. Save Data to File\n"
-                 << "0. Exit\n"
-                 << "Choice: ";
-            cin >> choice;
+        if (role == 1) { // ADMIN
+            int choice;
+            do {
+                cout << "\n[ADMIN MENU]\n"
+                     << "1. Add Patient\n"
+                     << "2. Add Doctor\n"
+                     << "3. Create Appointment\n"
+                     << "4. Generate Bill\n"
+                     << "5. Show Reports\n"
+                     << "6. View Appointments\n"
+                     << "7. Search Patient\n"
+                     << "8. Update Patient\n"
+                     << "9. Delete Patient\n"
+                     << "10. Save Data to File\n"
+                     << "0. Back to Role Selection\n"
+                     << "Choice: ";
+                cin >> choice;
 
-            switch (choice) {
-                case 1: {
-                    string name, disease;
+                switch (choice) {
+                    case 1: { 
+                         string name, disease;
                     int age, gender, patient_ID, room_number;
                     cout << "Enter patient's name: ";
                     cin.ignore(); 
@@ -293,10 +293,10 @@ int main() {
                     cin >> disease;
                     patients_list.push_back(patient(name, age, gender, patient_ID, room_number, disease));
                     cout << "Patient added successfully!\n";
-                    break;
-                }
-                case 2: {
-                    string name, specialization;
+                     break; 
+                    }
+                    case 2: { 
+                         string name, specialization;
                     int age, gender, doctor_ID;
                     cout << "Enter doctor's name: ";
                     cin.ignore();
@@ -311,13 +311,13 @@ int main() {
                     cin >> specialization;
                     doctors.push_back(Doctor(name, age, gender, doctor_ID, specialization));
                     cout << "Doctor added successfully!\n";
-                    break;
-                }
-                case 3: {
-                    int patient_ID;
+                         break;
+                         }
+                    case 3: { 
+                         int patient_ID;
                     string disease;
                     cout << "Enter Patient ID: ";
-                    cin >> patient_ID;
+                    cin >> patient_ID;  
                     cout << "Enter Disease: ";
                     cin >> disease;
                     if (diagnosis_map.find(disease) == diagnosis_map.end()) {
@@ -341,51 +341,59 @@ int main() {
                     cin >> doc_id >> time;
                     appointments.push_back({patient_ID, doc_id, time});
                     cout << "Appointment booked!\n";
-                    break;
+                         break;
+                         }
+                    case 4: generateBill(patients_list); break;
+                    case 5: showReports(patients_list); break;
+                    case 6: showAppointments(appointments); break;
+                    case 7: searchPatient(patients_list); break;
+                    case 8: updatePatient(patients_list); break;
+                    case 9: deletePatient(patients_list); break;
+                    case 10: {
+                        for (const auto& p : patients_list) savePatientToFile(p);
+                        for (const auto& a : appointments) saveAppointmentToFile(a);
+                        saveReportsToFile(patients_list);
+                        cout << "All data saved.\n";
+                        break;
+                    }
                 }
-                case 4: generateBill(patients_list); break;
-                case 5: showReports(patients_list); break;
-                case 6: showAppointments(appointments); break;
-                case 7: searchPatient(patients_list); break;
-                case 8: updatePatient(patients_list); break;
-                case 9: deletePatient(patients_list); break;
-                case 10: {
-                    for (const auto& p : patients_list)
-                        savePatientToFile(p);
-                    for (const auto& a : appointments)
-                        saveAppointmentToFile(a);
-                    saveReportsToFile(patients_list);
-                    cout << "All patient, appointment, and report data saved to file.\n";
-                    break;
-                }
-            }
-        } while (choice != 0);
-    } else if (role == 2) { // Doctor menu
-        int doc_id;
-        cout << "Enter your Doctor ID: ";
-        cin >> doc_id;
-        int option;
-        do {
-            cout << "\n[DOCTOR MENU]\n"
-                 << "1. View Appointments\n"
-                 << "2. Mark Completed\n"
-                 << "0. Exit\n"
-                 << "Choice: ";
-            cin >> option;
-            if (option == 1)
-                showAppointments(appointments);
-            else if (option == 2)
-                markAppointmentComplete(appointments, doc_id);
-        } while (option != 0);
-    } else if (role == 3) { // Patient menu (view own appointments)
-        int pid;
-        cout << "Enter your Patient ID: ";
-        cin >> pid;
-        cout << "\n--- Your Appointments ---\n";
-        for (const auto& a : appointments)
-            if (a.patient_ID == pid)
-                cout << "Doctor ID: " << a.doctor_ID << ", Time: " << a.time_slot << ", Status: " << (a.completed ? "Completed" : "Pending") << endl;
-    }
+            } while (choice != 0); // return to role selection
+        }
+        else if (role == 2) { // DOCTOR
+            int doc_id;
+            cout << "Enter your Doctor ID: ";
+            cin >> doc_id;
+            int option;
+            do {
+                cout << "\n[DOCTOR MENU]\n"
+                     << "1. View Appointments\n"
+                     << "2. Mark Completed\n"
+                     << "0. Back to Role Selection\n"
+                     << "Choice: ";
+                cin >> option;
+                if (option == 1) showAppointments(appointments);
+                else if (option == 2) markAppointmentComplete(appointments, doc_id);
+            } while (option != 0);
+        }
+        else if (role == 3) { // PATIENT
+            int pid;
+            cout << "Enter your Patient ID: ";
+            cin >> pid;
+            cout << "\n--- Your Appointments ---\n";
+            for (const auto& a : appointments)
+                if (a.patient_ID == pid)
+                    cout << "Doctor ID: " << a.doctor_ID 
+                         << ", Time: " << a.time_slot 
+                         << ", Status: " << (a.completed ? "Completed" : "Pending") << endl;
+        }
+        else if (role == 0) {
+            cout << "Exiting program.\n";
+        }
+        else {
+            cout << "Invalid role.\n";
+        }
+
+    } while (role != 0);
 
     return 0;
 }

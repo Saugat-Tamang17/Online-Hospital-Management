@@ -1,1 +1,2 @@
 Patient ID: 100, Name: saugat tamang, Disease: heart
+Patient ID: 101, Name: sanil sthapit, Disease: brain

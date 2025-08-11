@@ -1,1 +1,2 @@
 100,saugat tamang,heart
+101,sanil sthapit,brain
